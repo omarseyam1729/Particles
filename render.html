@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<head>
+    <style>
+   body{
+       background-color:purple;
+   }
+   canvas{
+     background-color: rgb(0, 0, 0);
+   } 
+    </style>
+</head>
+<body>
+   <canvas></canvas>
+   
+   
+   <script src="grafix.js"></script>
+   <script src="physics.js"></script>
+    <script>
+
+
+
+
+
+
+
+
+    new Circle(5,10,120,120,100,100,0,10);
+    for(let i=0;i<10;i++){
+        for(let j=0;j<10;j++){
+            new Circle(5,10,320+i*25,320+j*25,0,0,0,10);
+        }
+    }
+     function phy(){
+         for(let i=0;i<world.length;i++){
+             world[i].update();
+         }
+     }
+     function bind(){
+        for(let i=0;i<world.length;i++){
+             world[i].draw();
+         }
+     }
+     function render(){
+         requestAnimationFrame(render);
+         cc.clearRect(0,0,window.innerWidth,window.innerHeight);
+         phy();
+         bind();
+     }
+     render();
+    </script>
+</body>
+</html>
