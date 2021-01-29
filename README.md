@@ -1,2 +1,3 @@
 # Particles
-Elastic Collisons in JavaScript.
+Almost Elastic Collisons in JavaScript.
+co-efficient of restitution=0.9
