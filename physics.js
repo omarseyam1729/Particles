@@ -21,6 +21,12 @@ function Vector(x,y){
 this.diff=function(v){
 return new Vector(this.x-v.x,this.y-v.y);
 } 
+this.unit=function(){
+    return new Vector(this.x/this.norm(),this.y/this.norm());
+}
+this.mult=function(n){
+return new Vector(n*this.x,n*this.y);
+}
 }
 function linerconserve(obj1,obj2){
     let temp1=(obj1.r).diff(obj2.r);
@@ -42,8 +48,13 @@ function linerconserve(obj1,obj2){
     obj1.v=v1f;
 
 }
-
-
+function pen_res(b1,b2){
+    let dist=b1.r.diff(b2.r);
+    let pen_depth=b1.radius+b2.radius-dist.norm();
+    let pen_res=dist.unit().mult(pen_depth/2);
+    b1.r=b1.r.add(pen_res);
+    b2.r=b2.r.add(pen_res.mult(-1));
+}
 
 function Circle(mass,radius,x,y,vx,vy,ax,ay){
     world.push(this);
@@ -53,14 +64,31 @@ function Circle(mass,radius,x,y,vx,vy,ax,ay){
     this.v=new Vector(vx,vy);
     this.a=new Vector(ax,ay);
     this.update=function update(n=10){
-        this.r.x+=this.v.x/n;
-        this.r.y+=this.v.y/n;
         this.v.x+=this.a.x/n;
         this.v.y+=this.a.y/n;
-        if(Math.abs(this.r.x-can.width)<this.radius+2 || this.r.x<this.radius+2)this.v.x=-0.9*this.v.x;
-        if(Math.abs(this.r.y-can.height)<this.radius+2 || this.r.y<this.radius+2)this.v.y=-0.9*this.v.y;
+        this.r.x+=this.v.x/n;
+        this.vx*=0.9;
+        this.vy*=0.9;
+        this.r.y+=this.v.y/n;
+        if(this.r.x+this.radius>can.width){
+            this.r.x=can.width-this.radius;
+            this.v.x=-0.7*this.v.x;
+        }
+        if(this.r.y+this.radius>can.height){
+            this.r.y=can.height-this.radius;
+            this.v.y=-0.7*this.v.y;
+        }
+        if(this.r.x<this.radius){
+            this.r.x=this.radius;
+            this.v.x=-0.7*this.v.x;
+        }
+        if(this.r.y<this.radius){
+            this.r.y=this.radius;
+            this.v.y=-0.7*this.v.y;
+        }
         for(let i=0;i<world.length;i++){
             if(this!=world[i] && dist(this.r.x,this.r.y,world[i].r.x,world[i].r.y)<=this.radius+world[i].radius){
+               pen_res(this,world[i]);
                linerconserve(this,world[i]); 
             }
         }
